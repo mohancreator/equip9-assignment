@@ -8,12 +8,7 @@ require('dotenv').config();
 
 const app = express();
 app.use(express.json());
-app.use(
-    cors({
-        origin: 'http://localhost:3000',
-        credentials: true,
-    })
-);
+app.use(cors({ origin: 'https://equip9-client.netlify.app' }));
 
 // Connect to SQLite database (or create it if it doesn't exist)
 const dbPath = path.resolve(__dirname, 'database.sqlite');
