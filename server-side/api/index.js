@@ -15,6 +15,8 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'], 
 }));
 
+app.options('*', cors()); 
+
 // Handle OPTIONS request (pre-flight check)
 app.options('*', cors());  // Enable CORS pre-flight for all routes
 
