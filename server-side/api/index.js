@@ -8,9 +8,17 @@ require('dotenv').config();
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: 'https://equip9-client.netlify.app' }));
 
-// Connect to SQLite database (or create it if it doesn't exist)
+app.use(cors({
+    origin: 'https://equip9-client.netlify.app',
+    methods: ['GET', 'POST'], 
+    allowedHeaders: ['Content-Type', 'Authorization'], 
+}));
+
+// Handle OPTIONS request (pre-flight check)
+app.options('*', cors());  // Enable CORS pre-flight for all routes
+
+// Connect to SQLite database
 const dbPath = path.resolve(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
@@ -47,35 +55,27 @@ app.post('/register', async (req, res) => {
     }
 
     try {
-        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        db.get(
-            `SELECT * FROM users WHERE mobileNumber = ?`,
-            [mobileNumber],
-            (err, row) => {
-                if (err) {
-                    console.error('Error checking user existence:', err.message);
-                    return res.status(500).send('Error registering user');
-                }
-
-                if (row) {
-                    return res.status(400).send('Mobile number already registered');
-                }
-
-                db.run(
-                    `INSERT INTO users (firstName, lastName, mobileNumber, password) VALUES (?, ?, ?, ?)`,
-                    [firstName, lastName, mobileNumber, hashedPassword],
-                    (err) => {
-                        if (err) {
-                            console.error('Error inserting user:', err.message);
-                            return res.status(500).send('Error registering user');
-                        }
-                        res.status(201).send('User registered successfully');
-                    }
-                );
+        db.get(`SELECT * FROM users WHERE mobileNumber = ?`, [mobileNumber], (err, row) => {
+            if (err) {
+                console.error('Error checking user existence:', err.message);
+                return res.status(500).send('Error registering user');
             }
-        );
+
+            if (row) {
+                return res.status(400).send('Mobile number already registered');
+            }
+
+            db.run(`INSERT INTO users (firstName, lastName, mobileNumber, password) VALUES (?, ?, ?, ?)`,
+                [firstName, lastName, mobileNumber, hashedPassword], (err) => {
+                    if (err) {
+                        console.error('Error inserting user:', err.message);
+                        return res.status(500).send('Error registering user');
+                    }
+                    res.status(201).send('User registered successfully');
+                });
+        });
     } catch (error) {
         console.error('Error hashing password:', error.message);
         res.status(500).send('Error registering user');
@@ -90,44 +90,38 @@ app.post('/login', (req, res) => {
         return res.status(400).send('Mobile number and password are required');
     }
 
-    db.get(
-        `SELECT * FROM users WHERE mobileNumber = ?`,
-        [mobileNumber],
-        async (err, row) => {
-            if (err) {
-                console.error('Error querying user:', err.message);
-                return res.status(500).send('Error logging in');
-            }
-
-            if (!row) {
-                return res.status(401).send('Invalid mobile number or password');
-            }
-
-            // Compare hashed passwords
-            const isPasswordValid = await bcrypt.compare(password, row.password);
-            if (!isPasswordValid) {
-                return res.status(401).send('Invalid mobile number or password');
-            }
-
-            // Generate a JWT token
-            const token = jwt.sign(
-                { id: row.id, mobileNumber: row.mobileNumber },
-                process.env.JWT_SECRET,
-                { expiresIn: '1h' }
-            );
-
-            res.status(200).send({
-                message: 'Login successful',
-                token,
-                user: {
-                    id: row.id,
-                    firstName: row.firstName,
-                    lastName: row.lastName,
-                    mobileNumber: row.mobileNumber,
-                },
-            });
+    db.get(`SELECT * FROM users WHERE mobileNumber = ?`, [mobileNumber], async (err, row) => {
+        if (err) {
+            console.error('Error querying user:', err.message);
+            return res.status(500).send('Error logging in');
         }
-    );
+
+        if (!row) {
+            return res.status(401).send('Invalid mobile number or password');
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, row.password);
+        if (!isPasswordValid) {
+            return res.status(401).send('Invalid mobile number or password');
+        }
+
+        const token = jwt.sign(
+            { id: row.id, mobileNumber: row.mobileNumber },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        res.status(200).send({
+            message: 'Login successful',
+            token,
+            user: {
+                id: row.id,
+                firstName: row.firstName,
+                lastName: row.lastName,
+                mobileNumber: row.mobileNumber,
+            },
+        });
+    });
 });
 
 // Start the server
