@@ -28,7 +28,7 @@ function RegistrationPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const api = 'https://equip9-server.vercel.app/register';
+        const api = 'https://equip9-server.vercel.app/login';
 
         try {
             const response = await axios.post(api, formData); // Send form data to backend
