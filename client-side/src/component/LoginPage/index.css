@@ -1,0 +1,66 @@
+/* General Container Styling */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+}
+
+/* Form Styling */
+.login-form {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Form Title */
+.login-form h2 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+/* Input Fields */
+.login-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+/* Submit Button */
+.login-form button {
+    width: 100%;
+    padding: 10px;
+    background: #6a11cb;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.login-form button:hover {
+    background: #2575fc;
+}
+
+/* Error Message */
+.error-message {
+    color: red;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+/* Success Message */
+.success-message {
+    color: green;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
