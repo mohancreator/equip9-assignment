@@ -1,0 +1,81 @@
+.registration-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100vw;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Form Input Fields */
+.registration-form input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Form Button */
+.registration-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.registration-form button:hover {
+    background-color: #45a049;
+}
+
+/* Social Login Buttons */
+.social-login {
+    margin-top: 20px;
+}
+
+.social-login button {
+    width: 100%;
+    padding: 12px;
+    margin: 5px 0;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.social-login button:first-child {
+    background-color: #db4437; /* Google Red */
+    color: white;
+}
+
+.social-login button:nth-child(2) {
+    background-color: #3b5998; /* Facebook Blue */
+    color: white;
+}
+
+.social-login button:last-child {
+    background-color: #000; /* Apple Black */
+    color: white;
+}
+
+.social-login button:hover {
+    opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+    .registration-form {
+        padding: 20px;
+    }
+}

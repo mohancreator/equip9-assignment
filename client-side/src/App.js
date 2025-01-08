@@ -1,10 +1,10 @@
-import logo from './logo.svg';
+import RegistrationPage from './component/RegistrationPage';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <h1>Hello world</h1>
+      <RegistrationPage/>
     </div>
   );
 }
