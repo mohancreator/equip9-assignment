@@ -21,7 +21,7 @@ function LoginPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3008/login', formData);
+            const response = await axios.post('https://equip9-server.vercel.app/login', formData);
             setSuccessMessage(response.data.message);
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('firstName', response.data.user.firstName);
@@ -37,7 +37,7 @@ function LoginPage() {
     };
 
     const token = localStorage.getItem('token');
-    
+
     if (token) {
         return <Navigate to="/" replace />;
     }
