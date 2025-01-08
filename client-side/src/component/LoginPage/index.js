@@ -29,7 +29,7 @@ function LoginPage() {
             localStorage.setItem('lastName', response.data.user.lastName)
             console.log(response.data.user.firstName)
             setErrorMessage('');
-            navigate('/landing'); // Redirect to landing page
+            navigate('/'); // Redirect to landing page
         } catch (error) {
             setSuccessMessage('');
             setErrorMessage(error.response ? error.response.data : 'Login failed');

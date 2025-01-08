@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import RegistrationPage from './component/RegistrationPage';
 import LoginPage from './component/LoginPage';
 import LandingPage from './component/LandingPage';
-import ProtectedRoute from './ProtectedRoute/ProtectedRoute';  // Import the ProtectedRoute component
+import ProtectedRoute from './ProtectedRoute/ProtectedRoute'; 
 
 const App = () => {
     return (
