@@ -1,16 +1,21 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const ProtectedRoute = ({ element }) => {
+const ProtectedRoute = ({ children }) => {
     const token = localStorage.getItem('token');
     const navigate = useNavigate();
 
-    // Redirect to login if no token is found
-    if (!token) {
-        navigate('/login');
-        return null; // Prevent rendering of protected content
-    }
+    useEffect(() => {
+        // Redirect if there's no token
+        if (!token) {
+            navigate('/login');
+        }
+    }, [token, navigate]);
 
-    return element; // Render the protected component
+    // Render children only if the user is authenticated
+    if (!token) return null;
+
+    return children;
 };
 
 export default ProtectedRoute;
