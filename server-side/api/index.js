@@ -10,9 +10,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-    origin: 'https://equip9-client.netlify.app',
-    methods: ['GET', 'POST'], 
-    allowedHeaders: ['Content-Type', 'Authorization'], 
+    origin: '*', 
 }));
 
 app.options('*', cors()); 
