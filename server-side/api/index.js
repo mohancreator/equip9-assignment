@@ -17,8 +17,6 @@ app.use(cors({
 
 app.options('*', cors()); 
 
-// Handle OPTIONS request (pre-flight check)
-app.options('*', cors());  // Enable CORS pre-flight for all routes
 
 // Connect to SQLite database
 const dbPath = path.resolve(__dirname, 'database.sqlite');
