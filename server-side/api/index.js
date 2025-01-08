@@ -81,7 +81,7 @@ app.post('/register', async (req, res) => {
 });
 
 // Login Endpoint
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     const { mobileNumber, password } = req.body;
 
     if (!mobileNumber || !password) {
