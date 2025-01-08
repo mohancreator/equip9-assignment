@@ -11,7 +11,8 @@ const App = () => {
             <Routes>
                 <Route path="/register" element={<RegistrationPage />} />
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/" element={<ProtectedRoute element={<LandingPage />} />} />
+                {/* Pass LandingPage as children to ProtectedRoute */}
+                <Route path="/" element={<ProtectedRoute><LandingPage /></ProtectedRoute>} />
             </Routes>
         </Router>
     );

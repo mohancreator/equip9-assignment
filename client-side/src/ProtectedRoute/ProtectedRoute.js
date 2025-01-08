@@ -12,9 +12,6 @@ const ProtectedRoute = ({ children }) => {
         }
     }, [token, navigate]);
 
-    // Render children only if the user is authenticated
-    if (!token) return null;
-
     return children;
 };
 
