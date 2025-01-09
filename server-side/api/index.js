@@ -4,22 +4,32 @@ const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
 app.use(express.json());
+app.use(
+    cors({
+        origin: '*',
+        methods: ['GET', 'POST'],
+        credentials: true,
+    })
+);
+app.options('*', cors());
 
-app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST'],
-    credentials: true,
-}));
+// Database Path
+const dbPath = process.env.NODE_ENV === 'production'
+    ? '/tmp/database.sqlite'
+    : path.resolve(__dirname, 'database.sqlite');
 
-app.options('*', cors()); 
+// Ensure Database File Exists
+if (!fs.existsSync(dbPath)) {
+    console.error('Database file not found. Creating a new one...');
+    fs.writeFileSync(dbPath, '');
+}
 
-
-// Connect to SQLite database
-const dbPath = path.resolve(__dirname, 'database.sqlite');
+// Connect to SQLite Database
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Error connecting to SQLite database:', err.message);
@@ -28,7 +38,10 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Create the users table if it doesn't exist
+// Configure Database Timeout
+db.configure('busyTimeout', 5000); // 5 seconds
+
+// Create Users Table if Not Exists
 db.run(
     `CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,6 +58,15 @@ db.run(
         }
     }
 );
+
+// Middleware for Request Logging
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} - Start`);
+    res.on('finish', () => {
+        console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} - Finished`);
+    });
+    next();
+});
 
 // Register Endpoint
 app.post('/register', async (req, res) => {
@@ -67,14 +89,17 @@ app.post('/register', async (req, res) => {
                 return res.status(400).send('Mobile number already registered');
             }
 
-            db.run(`INSERT INTO users (firstName, lastName, mobileNumber, password) VALUES (?, ?, ?, ?)`,
-                [firstName, lastName, mobileNumber, hashedPassword], (err) => {
+            db.run(
+                `INSERT INTO users (firstName, lastName, mobileNumber, password) VALUES (?, ?, ?, ?)`,
+                [firstName, lastName, mobileNumber, hashedPassword],
+                (err) => {
                     if (err) {
                         console.error('Error inserting user:', err.message);
                         return res.status(500).send('Error registering user');
                     }
                     res.status(201).send('User registered successfully');
-                });
+                }
+            );
         });
     } catch (error) {
         console.error('Error hashing password:', error.message);
@@ -107,7 +132,7 @@ app.post('/login', async (req, res) => {
 
         const token = jwt.sign(
             { id: row.id, mobileNumber: row.mobileNumber },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET || 'default_secret',
             { expiresIn: '1h' }
         );
 
@@ -124,7 +149,9 @@ app.post('/login', async (req, res) => {
     });
 });
 
-// Start the server
-app.listen(3008, () => {
-    console.log('Server running on Port 3008');
+
+// Start Server
+const PORT = process.env.PORT || 3008;
+app.listen(PORT, () => {
+    console.log(`Server running on Port ${PORT}`);
 });
